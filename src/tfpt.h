@@ -1,5 +1,5 @@
-#ifndef BTPT_H
-#define BTPT_H
+#ifndef TFPT_H
+#define TFPT_H
 
 #include <linux/input.h>
 #include <linux/uinput.h>
@@ -12,31 +12,16 @@
 #include <QThread>
 #include <QWaitCondition>
 
-class Device
-{
-public:
-	int fd;
-	QList<QPair<struct input_event, QString>> cfg;
-};
-
-class BluetoothPageTurner : public QThread
+class TriggerFilePageTurner : public QObject
 {
 	Q_OBJECT
 
-	void run() override;
-
 private:
-	bool addDevice(
-		const QString &name,
-		const QString &uniq,
-		const QString &handler);
-	bool scanDevices();
-	void learn(Device &device);
 	QFileSystemWatcher watcher;
-	QMap<QString, Device> devices;
 	QMutex mutex;
-	QWaitCondition newDevice;
-	int deviceChanges = 0;
+
+public:
+	explicit TriggerFilePageTurner(QObject *parent = nullptr);
 
 public slots:
 	void directoryChanged(const QString &path);
@@ -53,4 +38,4 @@ public slots:
 	void notify();
 };
 
-#endif /* BTPT_H */
+#endif /* TFPT_H */
